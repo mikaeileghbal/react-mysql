@@ -1,0 +1,58 @@
+header {
+  background-color: #0c1729;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-color: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid;
+  padding: 0.2em 24px;
+}
+
+.navbar-brand {
+  letter-spacing: 0.04em;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background-color: var(--blue);
+    left: -0.7em;
+    top: 50%;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background-color: var(--blue);
+    left: -0.7em;
+    top: 20%;
+  }
+}
+
+.topmenu {
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: inline-block;
+  }
+
+  * + * {
+    margin-left: 2em;
+  }
+
+  a {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--light-gray);
+    text-transform: capitalize;
+
+    &:hover {
+      color: var(--blue);
+    }
+  }
+}

@@ -1,0 +1,21 @@
+.side-col {
+  width: 300px;
+  flex: 0 0 300px;
+  position: fixed;
+}
+
+main {
+  //height: 100vh;
+  margin-left: 300px;
+  padding: 3em 0;
+
+  //background-color: rgb(232, 238, 243);
+}
+
+aside {
+  height: 100%;
+  width: 100%;
+  padding-top: 3em;
+
+  //background-color: rgb(218, 227, 236);
+}
