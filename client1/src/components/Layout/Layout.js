@@ -12,22 +12,22 @@ const mainMenu = [
     text: "Home",
   },
   {
-    id: 1,
+    id: 2,
     to: "/context",
     text: "Context",
   },
   {
-    id: 1,
+    id: 3,
     to: "/redux",
     text: "Redux",
   },
   {
-    id: 1,
+    id: 4,
     to: "/reactquery",
     text: "Query",
   },
   {
-    id: 1,
+    id: 5,
     to: "/zustand",
     text: "Zustand",
   },

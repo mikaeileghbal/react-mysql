@@ -49,8 +49,10 @@ function ReduxApp() {
   };
 
   const onRemoveUser = async (id) => {
-    dispatch(fetchRemove(id));
-    onGetAllUsers();
+    if (window.confirm("Are you sure?")) {
+      dispatch(fetchRemove(id));
+      onGetAllUsers();
+    }
   };
 
   const onStartCreating = () => {
@@ -67,7 +69,7 @@ function ReduxApp() {
 
   useEffect(() => {
     dispatch(fetchAll());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     console.log("state: ", state);

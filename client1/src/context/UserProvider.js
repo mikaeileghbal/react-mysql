@@ -27,22 +27,31 @@ export default function UserProvider({ children }) {
 
   const onGetAllUsers = async () => {
     setLoading(true);
-    const users = await getAllUsers();
+    const { data: users } = await getAllUsers();
     setState({ ...state, users: users });
     setLoading(false);
     onEndEditing();
   };
 
   const onCreateUser = async (user) => {
-    const result = await createUser(user);
-    console.log("Create user: ", result);
+    const { message } = await createUser(user);
+    console.log(message);
     onGetAllUsers();
   };
 
   const onUpdateUser = async (id, user) => {
-    const result = await updateUser(id, user);
-    console.log(result);
+    const { message } = await updateUser(id, user);
+    console.log(message);
     onGetAllUsers();
+  };
+
+  const onRemoveUser = async (id) => {
+    console.log("delete this : ", id);
+    if (window.confirm("Are you sure?")) {
+      const { message } = await removeUser(id);
+      console.log(message);
+      onGetAllUsers();
+    }
   };
 
   const onStartEditing = (id, user) => {
@@ -57,13 +66,6 @@ export default function UserProvider({ children }) {
 
   const onEndEditing = (message) => {
     setState((state) => ({ ...state, editing: false, selectedId: -1 }));
-  };
-
-  const onRemoveUser = async (id) => {
-    console.log("delete this : ", id);
-    const result = await removeUser(id);
-    console.log(result);
-    onGetAllUsers();
   };
 
   const setLoading = (mode) => {

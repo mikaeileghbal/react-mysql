@@ -2,8 +2,8 @@ const BASE_URL = "http://localhost:3500/user";
 
 async function getAllUsers() {
   const response = await fetch(BASE_URL);
-  const result = await response.json();
-  return result.data;
+  if (!response.ok) throw new Error("Network response was not ok");
+  return await response.json();
 }
 
 async function createUser(user) {
@@ -13,21 +13,25 @@ async function createUser(user) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(user),
   });
-  return await response.text();
+  if (!response.ok) throw new Error("Network response was not ok");
+  return await response.json();
 }
 
 async function updateUser(id, user) {
+  console.log("called", user);
   const response = await fetch(BASE_URL + `/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(user),
   });
-  return await response.text();
+  if (!response.ok) throw new Error("Network response was not ok");
+  return await response.json();
 }
 
 async function removeUser(id) {
   const response = await fetch(BASE_URL + `/${id}`, { method: "DELETE" });
-  return response.text();
+  if (!response.ok) throw new Error("Network response was not ok");
+  return response.json();
 }
 
 export { getAllUsers, createUser, updateUser, removeUser };
