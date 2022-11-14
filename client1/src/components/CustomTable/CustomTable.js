@@ -22,7 +22,11 @@ function TableHead({ list }) {
     <thead>
       <tr>
         {headers.map((item) => (
-          <th className="table-light align-bottom" scope="col" key={item}>
+          <th
+            className="table-light align-bottom text-capitalize "
+            scope="col"
+            key={item}
+          >
             {item}
           </th>
         ))}

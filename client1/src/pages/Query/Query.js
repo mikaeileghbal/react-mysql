@@ -5,6 +5,7 @@ import {
   QueryClientProvider,
   QueryClient,
   useMutation,
+  useQueries,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CustomTable, Editor, Load } from "../../components";
@@ -28,6 +29,20 @@ const queryClient = new QueryClient({
   },
 });
 
+const users = [
+  {
+    id: 1,
+  },
+  {
+    id: 2,
+  },
+  {
+    id: 3,
+  },
+];
+
+function fetchUserById() {}
+
 export default function Query() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -37,6 +52,29 @@ export default function Query() {
 }
 
 function QueryApp() {
+  // Parallel Queries
+  const userQueries = useQueries({
+    queries: [
+      {
+        queryKey: ["user", 1],
+        queryFn: () => fetchUserById(1),
+      },
+      {
+        queryKey: ["user", 2],
+        queryFn: () => fetchUserById(2),
+      },
+    ],
+  });
+
+  const userQueriesDynamic = useQueries({
+    queries: users.map((user) => {
+      return {
+        queryKey: ["users", user.id],
+        queryFn: () => fetchUserById(user.id),
+      };
+    }),
+  });
+
   const [state, setState] = useState({
     editing: false,
     selectedId: -1,
@@ -45,6 +83,10 @@ function QueryApp() {
   const { isLoading, error, data, status, isError } = useQuery({
     queryKey: ["usersData"],
     queryFn: getAllUsers,
+  });
+
+  const mutationCreate = useMutation({
+    mutationFn: (user) => createUser(user),
   });
 
   const mutationUpdate = useMutation({
@@ -58,10 +100,6 @@ function QueryApp() {
     },
     onSuccess: (data, variables, context) => {},
     onSettled: (data, error, variables, context) => {},
-  });
-
-  const mutationCreate = useMutation({
-    mutationFn: (user) => createUser(user),
   });
 
   const mutationRemove = useMutation({
@@ -82,7 +120,7 @@ function QueryApp() {
         onSettled: () => {},
       }
     );
-    //onEndEditing();
+    onEndEditing();
   };
 
   const onRemoveUser = (id) => {
@@ -91,12 +129,12 @@ function QueryApp() {
     }
   };
 
-  const onStartEditing = (id, user) => {
-    setState({ ...state, editing: true, selectedUser: user, selectedId: id });
+  const onStartCreating = () => {
+    setState({ ...state, editing: true, selectedId: -1, selectedUser: {} });
   };
 
-  const onStartCreating = () => {
-    setState({ ...state, editing: true, selectedId: -1 });
+  const onStartEditing = (id, user) => {
+    setState({ ...state, editing: true, selectedUser: user, selectedId: id });
   };
 
   const onEndEditing = () => setState({ ...state, editing: false });
