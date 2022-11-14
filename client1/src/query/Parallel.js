@@ -5,6 +5,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import GlobalLoadingIndicator from "./GlobalLoadingIndicator";
+import Disable from "./Disable";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +24,7 @@ export default function Parallel() {
     <QueryClientProvider client={queryClient}>
       <GlobalLoadingIndicator />
       <ParallelApp />
+      <Disable />
     </QueryClientProvider>
   );
 }
