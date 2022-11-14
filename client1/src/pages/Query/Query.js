@@ -41,7 +41,10 @@ const users = [
   },
 ];
 
-function fetchUserById() {}
+function fetchUserById(id) {
+  console.log("fetch user by id: ", id);
+  return users[id - 1];
+}
 
 export default function Query() {
   return (
@@ -53,18 +56,19 @@ export default function Query() {
 
 function QueryApp() {
   // Parallel Queries
-  const userQueries = useQueries({
-    queries: [
-      {
-        queryKey: ["user", 1],
-        queryFn: () => fetchUserById(1),
-      },
-      {
-        queryKey: ["user", 2],
-        queryFn: () => fetchUserById(2),
-      },
-    ],
-  });
+  // Not used in app
+  // const userQueries = useQueries({
+  //   queries: [
+  //     {
+  //       queryKey: ["user", 1],
+  //       queryFn: () => fetchUserById(1),
+  //     },
+  //     {
+  //       queryKey: ["user", 2],
+  //       queryFn: () => fetchUserById(2),
+  //     },
+  //   ],
+  // });
 
   const userQueriesDynamic = useQueries({
     queries: users.map((user) => {

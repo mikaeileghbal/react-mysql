@@ -31,6 +31,11 @@ const mainMenu = [
     to: "/zustand",
     text: "Zustand",
   },
+  {
+    id: 6,
+    to: "/parallel",
+    text: "Parallel Queries",
+  },
 ];
 
 export default function Layout() {
