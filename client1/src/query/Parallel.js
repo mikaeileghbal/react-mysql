@@ -4,6 +4,7 @@ import {
   QueryClient,
   useQuery,
 } from "@tanstack/react-query";
+import GlobalLoadingIndicator from "./GlobalLoadingIndicator";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,6 +21,7 @@ const queryClient = new QueryClient({
 export default function Parallel() {
   return (
     <QueryClientProvider client={queryClient}>
+      <GlobalLoadingIndicator />
       <ParallelApp />
     </QueryClientProvider>
   );
@@ -50,6 +52,7 @@ function ParallelApp() {
   const { isLoading: userIsLoading, data: user } = useQuery({
     queryKey: ["user", 1],
     queryFn: () => fetchUser(1),
+    refetchOnWindowFocus: false,
   });
 
   const userId = user?.id;
