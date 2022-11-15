@@ -6,7 +6,7 @@ const config = {
     password: "1238",
     database: "reactmysql",
   },
-  listPerPage: 20,
+  listPerPage: 4,
 };
 
 module.exports = config;

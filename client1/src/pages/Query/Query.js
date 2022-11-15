@@ -5,7 +5,6 @@ import {
   QueryClientProvider,
   QueryClient,
   useMutation,
-  useQueries,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CustomTable, Editor, Load } from "../../components";
@@ -29,23 +28,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const users = [
-  {
-    id: 1,
-  },
-  {
-    id: 2,
-  },
-  {
-    id: 3,
-  },
-];
-
-function fetchUserById(id) {
-  console.log("fetch user by id: ", id);
-  return users[id - 1];
-}
-
 export default function Query() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -55,42 +37,23 @@ export default function Query() {
 }
 
 function QueryApp() {
-  // Parallel Queries
-  // Not used in app
-  // const userQueries = useQueries({
-  //   queries: [
-  //     {
-  //       queryKey: ["user", 1],
-  //       queryFn: () => fetchUserById(1),
-  //     },
-  //     {
-  //       queryKey: ["user", 2],
-  //       queryFn: () => fetchUserById(2),
-  //     },
-  //   ],
-  // });
-
-  const userQueriesDynamic = useQueries({
-    queries: users.map((user) => {
-      return {
-        queryKey: ["users", user.id],
-        queryFn: () => fetchUserById(user.id),
-      };
-    }),
-  });
-
+  const [page, setPage] = useState(1);
   const [state, setState] = useState({
     editing: false,
     selectedId: -1,
     selectedUser: {},
   });
+
   const { isLoading, error, data, status, isError } = useQuery({
-    queryKey: ["usersData"],
-    queryFn: getAllUsers,
+    queryKey: ["usersData", page],
+    queryFn: () => getAllUsers(page),
   });
 
   const mutationCreate = useMutation({
     mutationFn: (user) => createUser(user),
+    onSuccess: (data, variables, context) => {
+      refreshUsers();
+    },
   });
 
   const mutationUpdate = useMutation({
@@ -102,14 +65,22 @@ function QueryApp() {
     onError: (error, variables, context) => {
       console.log(`Rolling back optimistic update with id ${context.id}`);
     },
-    onSuccess: (data, variables, context) => {},
+    onSuccess: (data, variables, context) => {
+      refreshUsers();
+    },
     onSettled: (data, error, variables, context) => {},
   });
 
   const mutationRemove = useMutation({
     mutationFn: (id) => removeUser(id),
+    onSuccess: () => {
+      refreshUsers();
+    },
   });
 
+  const refreshUsers = () => {
+    queryClient.invalidateQueries({ queryKey: ["usersData"] });
+  };
   const onCreateUser = (user) => {
     mutationCreate.mutate(user);
     onEndEditing();
@@ -179,11 +150,24 @@ function QueryApp() {
             </span>
           </button>
           <CustomTable
-            list={data.data}
+            list={data?.data}
             onEdit={onStartEditing}
             onRemove={onRemoveUser}
             editing={state.editing}
           />
+          <button
+            className="btn btn-info"
+            onClick={() => setPage((old) => Math.max(old - 1, 1))}
+            disabled={page === 1}
+          >
+            Previeous
+          </button>
+          <button
+            className="btn btn-info mx-2"
+            onClick={() => setPage((old) => old + 1)}
+          >
+            Next
+          </button>
         </>
       )}
 
