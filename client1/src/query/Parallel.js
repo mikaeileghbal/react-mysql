@@ -7,6 +7,7 @@ import {
 import GlobalLoadingIndicator from "./GlobalLoadingIndicator";
 import Disable from "./Disable";
 import Lazy from "./Lazy";
+import InfiniteLoad from "./InfiniteLoad";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +28,7 @@ export default function Parallel() {
       <ParallelApp />
       <Disable />
       <Lazy />
+      <InfiniteLoad />
     </QueryClientProvider>
   );
 }

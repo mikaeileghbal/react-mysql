@@ -1,7 +1,10 @@
 const BASE_URL = "http://localhost:3500/user";
 
-async function getAllUsers(page = 1) {
-  const response = await fetch(BASE_URL + `/?page=${page}`, { method: "GET" });
+async function getAllUsers({ pageParam = 1 }) {
+  console.log("page in fetch:", pageParam);
+  const response = await fetch(BASE_URL + `/?page=${pageParam}`, {
+    method: "GET",
+  });
   if (!response.ok) throw new Error("Network response was not ok");
   return await response.json();
 }

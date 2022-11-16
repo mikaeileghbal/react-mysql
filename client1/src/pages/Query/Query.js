@@ -46,7 +46,7 @@ function QueryApp() {
 
   const { isLoading, error, data, status, isError } = useQuery({
     queryKey: ["usersData", page],
-    queryFn: () => getAllUsers(page),
+    queryFn: () => getAllUsers({ page }),
   });
 
   const mutationCreate = useMutation({
@@ -81,6 +81,7 @@ function QueryApp() {
   const refreshUsers = () => {
     queryClient.invalidateQueries({ queryKey: ["usersData"] });
   };
+
   const onCreateUser = (user) => {
     mutationCreate.mutate(user);
     onEndEditing();
