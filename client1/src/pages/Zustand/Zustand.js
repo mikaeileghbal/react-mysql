@@ -1,53 +1,84 @@
-import React from "react";
+import React, { useEffect } from "react";
+import CustomTable from "../../components/CustomTable/CustomTable";
+import Editor from "../../components/Editor/Editor";
+import { EDIT_MODES } from "../../utils";
 import useUserStore, { useStateStore } from "../../zustand";
 
 import "./styles.scss";
 
 export default function Zustand() {
-  const userId = useUserStore((state) => state.userId);
-  const increaseId = useUserStore((state) => state.increaseId);
-  const increaseBy = useUserStore((state) => state.increaseBy);
+  const editing = useUserStore((state) => state.editing);
+  const selectedId = useUserStore((state) => state.selectedId);
+  const selectedUser = useUserStore((state) => state.selectedUser);
+  const pageParam = useUserStore((state) => state.pageParam);
+  const setPageParam = useUserStore((state) => state.setPageParam);
+  const setEditing = useUserStore((state) => state.setEditing);
+  const getAllUsers = useUserStore((state) => state.getAllUsers);
 
-  const categories = useStateStore((state) => state.categories);
-  const setCategories = useStateStore((state) => state.setCategories);
+  const users = useUserStore((state) => state.users);
+  console.log("users:", users);
+
+  const onStartCreating = () => {
+    setEditing(true);
+  };
+
+  const onEndEditing = () => {
+    setEditing(false);
+  };
+
+  const onGetAllUsers = async (pageParam = 1) => {
+    console.log("page:", pageParam);
+    await getAllUsers(pageParam);
+  };
+
+  useEffect(() => {
+    onGetAllUsers(pageParam);
+  }, [pageParam]);
 
   return (
     <div>
-      <h1>React-Query</h1>
-      <p>{userId}</p>
-      <button onClick={increaseId}>Increment</button>
-      <button onClick={() => increaseBy(3)}>Increase By 3</button>
-      <button onClick={setCategories}>Load categories</button>
-      
-      {categories.map((cat) => (
-        <p key={cat.id}>{cat.name}</p>
-      ))}
+      <h1>Zustand</h1>
       <>
         <button
           className="btn btn-success my-2"
           type="button"
-          //disabled={editing}
-          //onClick={onStartCreating}
+          disabled={editing}
+          onClick={onStartCreating}
         >
           Add new user
         </button>
-        {/* <CustomTable
-          list={data.data}
-          //onEdit={onStartEditing}
-          //onRemove={onRemoveUser}
-          //editing={editing}
-        /> */}
+        {users.length !== 0 ? (
+          <CustomTable
+            list={users}
+            //onEdit={onStartEditing}
+            //onRemove={onRemoveUser}
+            //editing={editing}
+          />
+        ) : null}
+        <button
+          className="btn btn-info"
+          onClick={() => setPageParam(Math.max(pageParam - 1, 1))}
+          disabled={pageParam === 1}
+        >
+          Previeous
+        </button>
+        <button
+          className="btn btn-info mx-2"
+          onClick={() => setPageParam(pageParam + 1)}
+        >
+          Next
+        </button>
       </>
 
-      {/* {editing && (
+      {editing && (
         <Editor
           mode={selectedId === -1 ? EDIT_MODES.CREATE : EDIT_MODES.UPDATE}
           onEndEditing={onEndEditing}
-          onUpdateUser={onUpdateUser}
-          onCreateUser={onCreateUser}
-          user={selectedUser}
+          // onUpdateUser={onUpdateUser}
+          // onCreateUser={onCreateUser}
+          // user={selectedUser}
         />
-      )} */}
+      )}
     </div>
   );
 }

@@ -25,9 +25,9 @@ export default function UserProvider({ children }) {
     selectedUser: {},
   });
 
-  const onGetAllUsers = async () => {
+  const onGetAllUsers = (pageParam) => {
     setLoading(true);
-    const { data: users } = await getAllUsers();
+    const { data: users } = getAllUsers({ pageParam: 1 });
     setState({ ...state, users: users });
     setLoading(false);
     onEndEditing();

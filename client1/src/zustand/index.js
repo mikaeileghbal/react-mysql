@@ -1,10 +1,23 @@
 import CREATE from "zustand";
+import { getAllUsers } from "../api/dataSource";
 
 const useUserStore = CREATE((set) => ({
+  editing: false,
+  selectedId: -1,
+  selectedUser: {},
   userId: 0,
-  increaseId: () => set((state) => ({ userId: state.userId + 1 })),
-  resetId: () => set({ userId: 0 }),
-  increaseBy: (by) => set((state) => ({ userId: state.userId + by })),
+  users: [],
+  pageParam: 1,
+
+  setEditing: (mode) => set({ editing: mode }),
+  setSelectedId: (id) => set({ selectedId: id }),
+  setSelectedUser: (user) => set({ selectedUser: user }),
+  setPageParam: (page) => set({ pageParam: page }),
+  getAllUsers: async (pageParam) => {
+    const data = await getAllUsers({ pageParam });
+    console.log(data);
+    return set({ users: data.data });
+  },
 }));
 
 export default useUserStore;

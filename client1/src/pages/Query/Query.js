@@ -30,22 +30,17 @@ function QueryApp() {
     selectedUser: {},
   });
 
-  const { isLoading, error, data } = useQueryUsersAll(pageParam);
-
   const refreshUsers = () => {
     queryClient.invalidateQueries({ queryKey: ["usersData"] });
   };
+
+  const { isLoading, error, data } = useQueryUsersAll(pageParam);
 
   const mutationCreate = useMutateUserCreate(refreshUsers);
 
   const mutationUpdate = useMutateUserUpdate(refreshUsers);
 
   const mutationRemove = useMutateUserRemove(refreshUsers);
-
-  const filterUsers = () => {
-    const users = queryClient.getQueryData(["usersData"]);
-    console.log("filtered users", users);
-  };
 
   const onCreateUser = (user) => {
     mutationCreate.mutate(user);
@@ -139,7 +134,6 @@ function QueryApp() {
           user={state.selectedUser}
         />
       )}
-      <button onClick={filterUsers}>Filter data</button>
     </div>
   );
 }
