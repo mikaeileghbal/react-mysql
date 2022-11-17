@@ -1,32 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "./styles.scss";
-import {
-  useQuery,
-  QueryClientProvider,
-  QueryClient,
-  useMutation,
-} from "@tanstack/react-query";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CustomTable, Editor, Load } from "../../components";
-import {
-  createUser,
-  getAllUsers,
-  removeUser,
-  updateUser,
-} from "../../api/dataSource";
 import { EDIT_MODES } from "../../utils";
+import {
+  defaultOptions,
+  useMutateUserCreate,
+  useMutateUserRemove,
+  useMutateUserUpdate,
+  useQueryUsersAll,
+} from "../../query/mutations";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      retry: 1,
-      staleTime: 5 * 1000,
-    },
-  },
-});
+const queryClient = new QueryClient(defaultOptions);
 
 export default function Query() {
   return (
@@ -37,49 +23,28 @@ export default function Query() {
 }
 
 function QueryApp() {
-  const [page, setPage] = useState(1);
+  const [pageParam, setPage] = useState(1);
   const [state, setState] = useState({
     editing: false,
     selectedId: -1,
     selectedUser: {},
   });
 
-  const { isLoading, error, data, status, isError } = useQuery({
-    queryKey: ["usersData", page],
-    queryFn: () => getAllUsers({ page }),
-  });
-
-  const mutationCreate = useMutation({
-    mutationFn: (user) => createUser(user),
-    onSuccess: (data, variables, context) => {
-      refreshUsers();
-    },
-  });
-
-  const mutationUpdate = useMutation({
-    mutationFn: ({ id, user }) => updateUser(id, user),
-    onMutate: (variables) => {
-      console.log("variables: ", variables);
-      return { id: variables.id, user: variables.user };
-    },
-    onError: (error, variables, context) => {
-      console.log(`Rolling back optimistic update with id ${context.id}`);
-    },
-    onSuccess: (data, variables, context) => {
-      refreshUsers();
-    },
-    onSettled: (data, error, variables, context) => {},
-  });
-
-  const mutationRemove = useMutation({
-    mutationFn: (id) => removeUser(id),
-    onSuccess: () => {
-      refreshUsers();
-    },
-  });
+  const { isLoading, error, data } = useQueryUsersAll(pageParam);
 
   const refreshUsers = () => {
     queryClient.invalidateQueries({ queryKey: ["usersData"] });
+  };
+
+  const mutationCreate = useMutateUserCreate(refreshUsers);
+
+  const mutationUpdate = useMutateUserUpdate(refreshUsers);
+
+  const mutationRemove = useMutateUserRemove(refreshUsers);
+
+  const filterUsers = () => {
+    const users = queryClient.getQueryData(["usersData"]);
+    console.log("filtered users", users);
   };
 
   const onCreateUser = (user) => {
@@ -88,14 +53,7 @@ function QueryApp() {
   };
 
   const onUpdateUser = (id, user) => {
-    mutationUpdate.mutate(
-      { id, user },
-      {
-        onSuccess: () => {},
-        onError: () => {},
-        onSettled: () => {},
-      }
-    );
+    mutationUpdate.mutate({ id, user });
     onEndEditing();
   };
 
@@ -159,7 +117,7 @@ function QueryApp() {
           <button
             className="btn btn-info"
             onClick={() => setPage((old) => Math.max(old - 1, 1))}
-            disabled={page === 1}
+            disabled={pageParam === 1}
           >
             Previeous
           </button>
@@ -181,6 +139,7 @@ function QueryApp() {
           user={state.selectedUser}
         />
       )}
+      <button onClick={filterUsers}>Filter data</button>
     </div>
   );
 }
