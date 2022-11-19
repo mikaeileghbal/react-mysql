@@ -10,16 +10,27 @@ export default function Zustand() {
   const editing = useUserStore((state) => state.editing);
   const selectedId = useUserStore((state) => state.selectedId);
   const selectedUser = useUserStore((state) => state.selectedUser);
+  const setSelectedId = useUserStore((state) => state.setSelectedId);
+  const setSelectedUser = useUserStore((state) => state.setSelectedUser);
+
   const pageParam = useUserStore((state) => state.pageParam);
-  const setPageParam = useUserStore((state) => state.setPageParam);
   const setEditing = useUserStore((state) => state.setEditing);
   const getAllUsers = useUserStore((state) => state.getAllUsers);
+  const setPageParam = useUserStore((state) => state.setPageParam);
 
   const users = useUserStore((state) => state.users);
   console.log("users:", users);
 
   const onStartCreating = () => {
     setEditing(true);
+    setSelectedId(-1);
+    setSelectedUser({});
+  };
+
+  const onStartEditing = (id, users) => {
+    setEditing(true);
+    setSelectedId(id);
+    setSelectedUser(users);
   };
 
   const onEndEditing = () => {
@@ -50,9 +61,9 @@ export default function Zustand() {
         {users.length !== 0 ? (
           <CustomTable
             list={users}
-            //onEdit={onStartEditing}
+            onEdit={onStartEditing}
             //onRemove={onRemoveUser}
-            //editing={editing}
+            editing={editing}
           />
         ) : null}
         <button
@@ -76,7 +87,7 @@ export default function Zustand() {
           onEndEditing={onEndEditing}
           // onUpdateUser={onUpdateUser}
           // onCreateUser={onCreateUser}
-          // user={selectedUser}
+          user={selectedUser}
         />
       )}
     </div>
