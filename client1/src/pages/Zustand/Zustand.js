@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createUser, updateUser } from "../../api/dataSource";
 import CustomTable from "../../components/CustomTable/CustomTable";
 import Editor from "../../components/Editor/Editor";
 import { EDIT_MODES } from "../../utils";
@@ -37,9 +38,23 @@ export default function Zustand() {
     setEditing(false);
   };
 
-  const onGetAllUsers = async (pageParam = 1) => {
+  const onGetAllUsers = (pageParam = 1) => {
     console.log("page:", pageParam);
-    await getAllUsers(pageParam);
+    getAllUsers(pageParam);
+  };
+
+  const onUpdateUser = (id, user) => {
+    console.log("update thid: ", id, user);
+    updateUser(id, user);
+    setEditing(false);
+    return onGetAllUsers(pageParam);
+  };
+
+  const onCreateUser = (user) => {
+    console.log("Create this: ", user);
+    createUser(user);
+    setEditing(false);
+    return onGetAllUsers(pageParam);
   };
 
   useEffect(() => {
@@ -85,8 +100,8 @@ export default function Zustand() {
         <Editor
           mode={selectedId === -1 ? EDIT_MODES.CREATE : EDIT_MODES.UPDATE}
           onEndEditing={onEndEditing}
-          // onUpdateUser={onUpdateUser}
-          // onCreateUser={onCreateUser}
+          onUpdateUser={onUpdateUser}
+          onCreateUser={onCreateUser}
           user={selectedUser}
         />
       )}

@@ -25,10 +25,10 @@ export default function UserProvider({ children }) {
     selectedUser: {},
   });
 
-  const onGetAllUsers = (pageParam) => {
+  const onGetAllUsers = async (pageParam) => {
     setLoading(true);
-    const { data: users } = getAllUsers({ pageParam: 1 });
-    setState({ ...state, users: users });
+    const data = await getAllUsers({ pageParam: 1 });
+    setState({ ...state, users: data.data });
     setLoading(false);
     onEndEditing();
   };
@@ -71,6 +71,9 @@ export default function UserProvider({ children }) {
   const setLoading = (mode) => {
     setState((state) => ({ ...state, loading: mode }));
   };
+  useEffect(() => {
+    onGetAllUsers(1);
+  }, []);
 
   useEffect(() => {
     console.log("state:", state);
