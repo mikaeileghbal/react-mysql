@@ -22,21 +22,11 @@ function TopMenu() {
         <ListItem>
           <NavLink to="/">home</NavLink>
         </ListItem>
-
         <ListItem>
-          <NavLink to="/context">context</NavLink>
+          <NavLink to="/context">about</NavLink>
         </ListItem>
-
         <ListItem>
-          <NavLink to="/redux">redux</NavLink>
-        </ListItem>
-
-        <ListItem>
-          <NavLink to="/reactquery">react query</NavLink>
-        </ListItem>
-
-        <ListItem>
-          <NavLink to="/zustand">zustand</NavLink>
+          <NavLink to="/redux">contact</NavLink>
         </ListItem>
       </List>
     </div>
